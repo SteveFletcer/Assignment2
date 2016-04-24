@@ -14,6 +14,65 @@ class Site extends CI_Controller
 		$this->load->view('option_views',$data);
 	}*/
 
+	function checkcustomerloginfunction()
+	{
+		$this->form_validation->set_rules('uname', 'Username', 'required');
+		$this->form_validation->set_rules('pword', 'Password', 'required|callback_verifyUser');
+
+		if ($this->form_validation->run() == false){
+			$this->load->view("login");
+		}else
+		{
+			redirect('site/showroom');
+		}
+	}
+
+	function verifyUser()
+	{
+		$username = $this->input->post('uname');
+		$password = $this->input->post('pword');
+
+		$this->load->model('site_model');
+
+		if($this->site_model->customerlogin($username, $password)){
+				return true;
+		}else{
+			$this->form_validation->set_message('verifyUser','Incorrect Username or Password; please re-enter user credentials');
+			return false;
+		}
+
+	}
+
+	function adminloginfunction()
+	{
+		$username = $this->input->post('uname');
+		$password = $this->input->post('pword');
+
+		if($username == 'Admin' && $password == 'Admin')
+		{
+			$data['username'] = $username;
+			$this->load->view('adminhome', $data);
+		}else{
+			$data['error'] = 'Invalid Password - Please Re-Enter Admin Credentials';
+			$this->load->view('adminlogin', $data);
+		}
+	}
+
+	function staffloginfunction()
+	{
+		$username = $this->input->post('uname');
+		$password = $this->input->post('pword');
+
+		if($username == 'Staff' && $password == 'Staff')
+		{
+			$data['username'] = $username;
+			$this->load->view('carlanding', $data);
+		}else{
+			$data['error'] = 'Invalid Password - Please Re-Enter Staff Credentials';
+			$this->load->view('stafflogin', $data);
+		}
+	}
+
 	function carindex()
 	{
 		$data = array();
